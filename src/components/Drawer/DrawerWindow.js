@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
     Box,
     Divider,
@@ -9,26 +10,29 @@ import {
     Typography
 } from "@mui/material";
 import axios from "axios";
-import usePromiseState from "../../hooks/usePromiseState";
 
 const cssPropertiesLink = "/db/cssProperties.json";
-const drawerWidth = 275;
+const drawerWidth = 350;
 
 function useGetCSSProperties() {
-    const data = usePromiseState(() => {
-        if(cssPropertiesLink) return axios.get(cssPropertiesLink);
-        return Promise.resolve(null);
-    });
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        axios
+            .get(cssPropertiesLink)
+            .then((res) => setData(res.data));
+    }, []);
     return data;
 };
 
 function DrawerWindow({
     drawerOpen = false,
-    handleDrawerToggle = null
+    handleDrawerToggle,
+    onPropertyChange
 }) {
 
     const cssProperties = useGetCSSProperties();
-    console.log({cssProperties});
+    const cssPropertyNames = cssProperties ? Object.keys(cssProperties) : [];
 
     return (
         <Box component="nav">
@@ -40,7 +44,7 @@ function DrawerWindow({
                 ModalProps={{ keepMounted: true }}
                 PaperProps={{ sx: { backgroundColor: "hsl(206, 8%, 17%)" } }}
             >
-                <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+                <Box sx={{ textAlign: "center" }}>
                     <Typography
                         sx={{ color:"white", fontSize: "1.5em", fontWeight: 700, my: 2 }}
                         variant="h6"
@@ -49,21 +53,23 @@ function DrawerWindow({
                     </Typography>
                     <Divider />
                     <List>
-                        {/* {cssProperties.map((property) => (
+                        {cssPropertyNames.map((property) => (
                             <ListItem key={property} disablePadding>
-                                <ListItemButton sx={{ textAlign: "center" }}>
+                                <ListItemButton
+                                    onClick={() => onPropertyChange(property)}
+                                    sx={{ textAlign: "center" }}
+                                >
                                     <ListItemText
                                         primary={property}
                                         primaryTypographyProps={{
                                             color: "white",
-                                            fontSize: "1.2em",
-                                            fontWeight: "500",
+                                            fontSize: "1.1em",
                                             variant: "body2"
                                         }}
                                     />
                                 </ListItemButton>
                             </ListItem>
-                        ))} */}
+                        ))}
                     </List>
                  </Box>
             </Drawer>

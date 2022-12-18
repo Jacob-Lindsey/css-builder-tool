@@ -9,7 +9,7 @@ import {
 import { Menu as MenuIcon } from "@mui/icons-material";
 import DrawerWindow from "../Drawer/DrawerWindow";
 
-function Header() {
+function Header({onPropertyChange}) {
 
     const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -44,6 +44,7 @@ function Header() {
             <DrawerWindow
                 drawerOpen={drawerOpen}
                 handleDrawerToggle={handleDrawerToggle}
+                onPropertyChange={onPropertyChange}
             />
         </Box>
     )
